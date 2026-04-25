@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entregas semanales</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface-2: #1e1e1e;
+  --surface-3: #272727;
+  --white: #ffffff;
+  --ink: #f0f0f0;
+  --ink-mid: #aaaaaa;
+  --ink-soft: #666666;
+  --purple: #a855f7;
+  --purple-dim: #7c3aed;
+  --purple-glow: rgba(168,85,247,0.18);
+  --purple-border: rgba(168,85,247,0.3);
+  --teal: #2dd4bf;
+  --teal-dim: rgba(45,212,191,0.15);
+  --rose: #fb7185;
+  --rose-dim: rgba(251,113,133,0.15);
+  --amber: #fbbf24;
+  --amber-dim: rgba(251,191,36,0.15);
+  --border: rgba(255,255,255,0.08);
+  --border-mid: rgba(255,255,255,0.14);
+  --r: 16px;
+  --r-sm: 10px;
+}
+body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
+
+.header {
+  background: linear-gradient(135deg, #1a0533 0%, #0d0d1a 60%, #0a0a0a 100%);
+  padding: 2.5rem 1.5rem 3.5rem;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--purple-border);
+}
+.header::before {
+  content:''; position:absolute; top:-80px; right:-80px;
+  width:320px; height:320px;
+  background:radial-gradient(circle, rgba(168,85,247,0.2) 0%, transparent 65%);
+  border-radius:50%; pointer-events:none;
+}
+.header::after {
+  content:''; position:absolute; bottom:-30px; left:-20px; right:-20px; height:50px;
+  background:var(--bg); border-radius:50% 50% 0 0/100% 100% 0 0;
+}
+.header-emoji { font-size:2.2rem; margin-bottom:0.6rem; display:block; position:relative; }
+.header h1 { font-size:clamp(1.7rem,5vw,2.3rem); font-weight:800; color:var(--white); line-height:1.2; margin-bottom:0.4rem; position:relative; }
+.header h1 em { font-style:italic; color:var(--purple); }
+.header p { font-size:14px; color:var(--ink-mid); position:relative; }
+.week-pill {
+  display:inline-flex; align-items:center; gap:7px;
+  background:rgba(168,85,247,0.15); border:1px solid var(--purple-border);
+  color:var(--purple); font-size:12px; font-weight:700;
+  padding:5px 14px; border-radius:20px; margin-top:1rem; position:relative;
+}
+.week-dot { width:7px; height:7px; background:var(--purple); border-radius:50%; animation:blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0.25} }
+
+main { max-width:620px; margin:0 auto; padding:1.75rem 1.25rem 5rem; }
+
+.type-tabs { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:1.25rem; }
+.type-tab { background:var(--surface); border:2px solid var(--border); border-radius:var(--r); padding:1rem; cursor:pointer; text-align:center; transition:all 0.18s; }
+.type-tab:hover { border-color:var(--purple-border); background:var(--surface-2); }
+.type-tab.active { border-color:var(--purple); background:var(--purple-glow); }
+.type-tab-emoji { font-size:1.8rem; display:block; margin-bottom:5px; }
+.type-tab-name { font-size:15px; font-weight:800; color:var(--ink-mid); }
+.type-tab-desc { font-size:12px; color:var(--ink-soft); margin-top:2px; }
+.type-tab.active .type-tab-name { color:var(--purple); }
+
+.block { background:var(--surface); border-radius:var(--r); padding:1.25rem; margin-bottom:1rem; border:1px solid var(--border); }
+.block-title { font-size:11px; font-weight:800; color:var(--ink-soft); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem; display:flex; align-items:center; gap:7px; }
+.block-title span { font-size:15px; }
+
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media(max-width:460px){.row2{grid-template-columns:1fr}}
+
+.field { display:flex; flex-direction:column; gap:5px; margin-bottom:0.9rem; }
+.field:last-child { margin-bottom:0; }
+.field label { font-size:13px; font-weight:700; color:var(--ink-mid); }
+.req { color:var(--rose); margin-left:2px; }
+
+.field input,.field select,.field textarea {
+  font-family:'Nunito',sans-serif; font-size:14px; font-weight:600;
+  background:var(--surface-2); border:1.5px solid var(--border-mid);
+  border-radius:var(--r-sm); padding:10px 13px; color:var(--ink);
+  transition:border-color 0.15s,background 0.15s; outline:none; width:100%; -webkit-appearance:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus { border-color:var(--purple); background:var(--surface-3); }
+.field input::placeholder,.field textarea::placeholder { color:var(--ink-soft); font-weight:400; }
+.field select {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a855f7' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 13px center;
+  background-color:var(--surface-2); padding-right:36px; cursor:pointer;
+}
+.field select option { background:#1e1e1e; color:#f0f0f0; }
+.field textarea { resize:vertical; min-height:85px; line-height:1.6; font-weight:400; }
+
+.hours-wrap { position:relative; }
+.hours-wrap input { padding-right:44px; }
+.hours-unit { position:absolute; right:13px; top:50%; transform:translateY(-50%); font-size:12px; font-weight:800; color:var(--purple); pointer-events:none; }
+
+.chips-label { font-size:12px; color:var(--ink-soft); font-weight:600; margin-bottom:7px; }
+.chips { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:9px; }
+.chip {
+  font-family:'Nunito',sans-serif; font-size:13px; font-weight:600;
+  padding:5px 13px; border-radius:20px; border:1.5px solid var(--border-mid);
+  background:var(--surface-2); color:var(--ink-mid);
+  cursor:pointer; transition:all 0.15s; user-select:none;
+}
+.chip:hover { border-color:var(--purple-border); color:var(--purple); background:var(--purple-glow); }
+.chip.selected { border-color:var(--purple); color:var(--purple); background:var(--purple-glow); }
+
+.drop-zone {
+  border:2px dashed var(--border-mid); border-radius:var(--r);
+  background:var(--surface-2); padding:2rem 1.25rem; text-align:center;
+  cursor:pointer; transition:border-color 0.2s,background 0.2s; position:relative;
+}
+.drop-zone:hover,.drop-zone.drag { border-color:var(--purple); background:var(--purple-glow); }
+.drop-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.drop-emoji { font-size:2rem; margin-bottom:8px; display:block; }
+.drop-title { font-size:15px; font-weight:700; color:var(--ink); margin-bottom:3px; }
+.drop-sub { font-size:13px; color:var(--ink-mid); }
+.type-pills { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-top:12px; }
+.type-pill { font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; background:var(--surface-3); border:1px solid var(--border-mid); color:var(--ink-soft); }
+
+.file-list { margin-top:10px; display:flex; flex-direction:column; gap:7px; }
+.file-item { display:flex; align-items:center; gap:10px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-sm); padding:9px 13px; font-size:13px; }
+.ficon { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; flex-shrink:0; }
+.ficon.video { background:rgba(59,130,246,0.2); color:#60a5fa; }
+.ficon.rar   { background:var(--amber-dim); color:var(--amber); }
+.ficon.other { background:var(--surface-3); color:var(--ink-soft); }
+.finfo { flex:1; min-width:0; }
+.fname { font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fsize { color:var(--ink-soft); font-size:12px; }
+.fremove { width:26px; height:26px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-soft); background:none; border:none; border-radius:6px; flex-shrink:0; transition:background 0.15s,color 0.15s; font-size:16px; }
+.fremove:hover { background:var(--rose-dim); color:var(--rose); }
+
+.submit-btn {
+  width:100%; padding:15px; background:var(--purple); color:#fff; border:none;
+  border-radius:var(--r); font-family:'Nunito',sans-serif; font-size:16px; font-weight:800;
+  cursor:pointer; transition:background 0.2s,transform 0.1s,box-shadow 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:8px; margin-top:1.25rem;
+  box-shadow:0 0 24px rgba(168,85,247,0.35);
+}
+.submit-btn:hover { background:#9333ea; box-shadow:0 0 32px rgba(168,85,247,0.5); }
+.submit-btn:active { transform:scale(0.99); }
+.submit-btn:disabled { background:var(--surface-3); color:var(--ink-soft); box-shadow:none; cursor:not-allowed; }
+
+.progress-wrap { height:4px; background:var(--surface-2); border-radius:2px; margin-top:10px; overflow:hidden; display:none; }
+.progress-bar { height:100%; background:var(--purple); border-radius:2px; width:0%; transition:width 0.3s; }
+.progress-label { font-size:13px; font-weight:600; color:var(--ink-mid); margin-top:5px; text-align:center; display:none; }
+
+.status-box { border-radius:var(--r-sm); padding:1rem 1.25rem; font-size:14px; font-weight:600; margin-top:10px; display:none; align-items:flex-start; gap:10px; }
+.status-box.ok  { background:var(--teal-dim); color:var(--teal); border:1px solid rgba(45,212,191,0.3); display:flex; }
+.status-box.err { background:var(--rose-dim); color:var(--rose); border:1px solid rgba(251,113,133,0.3); display:flex; }
+
+.config-notice { background:var(--amber-dim); border:1.5px solid rgba(251,191,36,0.25); border-radius:var(--r); padding:1rem 1.25rem; font-size:13px; font-weight:600; color:var(--amber); margin-bottom:1.25rem; display:flex; gap:10px; align-items:flex-start; }
+.config-notice a { color:var(--amber); }
+
+/* ── INSTRUCCIONES ── */
+.instrucciones { background:var(--surface); border-radius:var(--r); border:1px solid var(--border); padding:1.5rem; margin-top:2rem; font-size:13px; line-height:1.8; color:var(--ink-mid); }
+.instrucciones h2 { font-size:15px; font-weight:800; color:var(--ink); margin-bottom:1rem; }
+.instrucciones a { color:var(--purple); }
+.step { display:flex; gap:12px; margin-bottom:1rem; }
+.step:last-child { margin-bottom:0; }
+.step-num { width:26px; height:26px; border-radius:50%; background:var(--purple-glow); border:1px solid var(--purple-border); color:var(--purple); font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.step-body { flex:1; }
+.step-title { font-weight:800; color:var(--ink); font-size:13px; margin-bottom:2px; }
+.step-desc { color:var(--ink-mid); font-size:13px; }
+.step-desc code { background:var(--surface-2); padding:1px 6px; border-radius:4px; font-size:12px; color:var(--purple); }
+.instr-divider { height:1px; background:var(--border); margin:1.25rem 0; }
+.tip-box { background:var(--surface-2); border-radius:var(--r-sm); padding:10px 14px; font-size:13px; color:var(--ink-mid); margin-top:1rem; }
+.tip-box strong { color:var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-emoji">📬</span>
+  <h1>¡Sube tu tarea<br>de esta <em>semana</em>!</h1>
+  <p>Rellena el formulario y adjunta tu archivo 🎉</p>
+  <div class="week-pill">
+    <span class="week-dot"></span>
+    <span id="weekLabel">Semana actual</span>
+  </div>
+</div>
+
+<main>
+
+  <div class="config-notice" id="configNotice">
+    <span style="font-size:18px">⚠️</span>
+    <div>
+      <strong>Falta configurar Drive:</strong> sigue las instrucciones al final de la página para activar la subida.
+      <a href="#instrucciones" style="text-decoration:underline;display:block;margin-top:2px">Ver instrucciones ↓</a>
+    </div>
+  </div>
+
+  <!-- TIPO -->
+  <div class="block-title" style="margin-bottom:8px"><span>📂</span> ¿Qué estás entregando?</div>
+  <div class="type-tabs">
+    <div class="type-tab active" data-type="Entrega" onclick="selectType(this)">
+      <span class="type-tab-emoji">🎬</span>
+      <div class="type-tab-name">Entrega</div>
+      <div class="type-tab-desc">El ejercicio de la semana</div>
+    </div>
+    <div class="type-tab" data-type="Q&A" onclick="selectType(this)">
+      <span class="type-tab-emoji">💬</span>
+      <div class="type-tab-name">Q&amp;A</div>
+      <div class="type-tab-desc">Preguntas y respuestas</div>
+    </div>
+  </div>
+
+  <!-- DATOS -->
+  <div class="block">
+    <div class="block-title"><span>👤</span> Tus datos</div>
+    <div class="row2">
+      <div class="field">
+        <label for="nombre">Nombre y apellidos <span class="req">*</span></label>
+        <input type="text" id="nombre" placeholder="Tu nombre completo">
+      </div>
+      <div class="field">
+        <label for="email">Email <span class="req">*</span></label>
+        <input type="email" id="email" placeholder="tuemail@aqui.com">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field" style="margin-bottom:0">
+        <label for="curso">Curso <span class="req">*</span></label>
+        <select id="curso">
+          <option value="">Elige tu curso</option>
+          <option>Acting avanzado</option>
+          <option>Monster Lab</option>
+          <option>Reel up</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label for="semana">Semana <span class="req">*</span></label>
+        <select id="semana"><option value="">Elige la semana</option></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFLEXIÓN -->
+  <div class="block">
+    <div class="block-title"><span>💭</span> Cuéntame un poco</div>
+
+    <div class="field">
+      <label for="horas">¿Cuántas horas le has dedicado? <span class="req">*</span></label>
+      <div class="hours-wrap">
+        <input type="number" id="horas" min="0.5" max="100" step="0.5" placeholder="ej: 3.5">
+        <span class="hours-unit">h</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Cómo te ha ido? <span class="req">*</span></label>
+      <div class="chips-label">Elige una opción o escribe abajo 👇</div>
+      <div class="chips" id="difChips">
+        <div class="chip" onclick="selectChip(this,'dif')">😎 Todo bien!</div>
+        <div class="chip" onclick="selectChip(this,'dif')">🙂 Sin grandes problemas</div>
+        <div class="chip" onclick="selectChip(this,'dif')">😅 Me ha costado un poco</div>
+        <div class="chip" onclick="selectChip(this,'dif')">😤 Ha sido bastante difícil</div>
+        <div class="chip" onclick="selectChip(this,'dif')">😵 Me he atascado mucho</div>
+        <div class="chip" onclick="selectChip(this,'dif')">🤯 No lo he entendido bien</div>
+      </div>
+      <textarea id="dificultades" placeholder="O cuéntame con tus palabras qué te ha resultado complicado..." maxlength="1000"></textarea>
+    </div>
+
+    <div class="field" style="margin-bottom:0">
+      <label>¿Algo más que añadir?</label>
+      <div class="chips-label">Opcional — elige o escribe 👇</div>
+      <div class="chips" id="comChips">
+        <div class="chip" onclick="selectChip(this,'com')">👍 Sin comentarios</div>
+        <div class="chip" onclick="selectChip(this,'com')">🙋 Tengo dudas para clase</div>
+        <div class="chip" onclick="selectChip(this,'com')">💡 He aprendido algo nuevo</div>
+        <div class="chip" onclick="selectChip(this,'com')">⏰ Me ha faltado tiempo</div>
+        <div class="chip" onclick="selectChip(this,'com')">🤝 He necesitado ayuda</div>
+      </div>
+      <textarea id="comentarios" placeholder="O escribe lo que quieras aquí..." maxlength="500" style="min-height:70px"></textarea>
+    </div>
+  </div>
+
+  <!-- ARCHIVO -->
+  <div class="block">
+    <div class="block-title"><span>📎</span> Tu archivo</div>
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept=".rar,.zip,.mp4,.mov,.avi,.mkv,.wmv,.webm,.7z" multiple>
+      <span class="drop-emoji">☁️</span>
+      <div class="drop-title">Arrastra aquí o haz clic</div>
+      <div class="drop-sub">Vídeo o archivo comprimido — sin límite de tamaño</div>
+      <div class="type-pills">
+        <span class="type-pill">MP4</span><span class="type-pill">MOV</span><span class="type-pill">AVI</span>
+        <span class="type-pill">MKV</span><span class="type-pill">RAR</span><span class="type-pill">ZIP</span><span class="type-pill">7Z</span>
+      </div>
+    </div>
+    <div class="file-list" id="fileList"></div>
+  </div>
+
+  <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">🚀 Enviar a Drive</button>
+  <div class="progress-wrap" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="progress-label" id="progressLabel"></div>
+  <div class="status-box" id="statusBox"></div>
+
+  <!-- INSTRUCCIONES -->
+  <div class="instrucciones" id="instrucciones">
+    <h2>⚙️ Cómo configurarlo paso a paso</h2>
+
+    <p style="color:var(--ink-mid);font-size:13px;margin-bottom:1.25rem">
+      Como el archivo se abre localmente (<code>file://</code>), Google no permite autenticarse así directamente.
+      La solución más sencilla es publicarlo gratis en <strong style="color:var(--ink)">GitHub Pages</strong> — tarda menos de 5 minutos y tus alumnos acceden con un enlace normal.
+    </p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Crea una cuenta en GitHub</div>
+        <div class="step-desc">Ve a <a href="https://github.com" target="_blank">github.com</a> y regístrate gratis (si ya tienes cuenta, sáltate este paso).</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Sube el archivo HTML</div>
+        <div class="step-desc">Crea un repositorio nuevo → ponle el nombre que quieras → haz clic en <em>"uploading an existing file"</em> → arrastra este archivo HTML → nómbralo exactamente <code>index.html</code> → pulsa <em>"Commit changes"</em>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Activa GitHub Pages</div>
+        <div class="step-desc">En tu repositorio ve a <em>Settings → Pages → Source</em>, selecciona la rama <code>main</code> y pulsa <em>Save</em>. En unos segundos tendrás una URL del tipo <code>https://tunombre.github.io/nombre-repo/</code>. ¡Esa es la URL que envías a tus alumnos!</div>
+      </div>
+    </div>
+
+    <div class="instr-divider"></div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Configura Google Cloud</div>
+        <div class="step-desc">Ve a <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a>, crea un proyecto y activa la <strong style="color:var(--ink)">Google Drive API</strong> en "APIs y servicios → Biblioteca".</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Crea las credenciales OAuth</div>
+        <div class="step-desc">En "APIs y servicios → Credenciales" crea un <strong style="color:var(--ink)">ID de cliente OAuth 2.0</strong> de tipo "Aplicación web". En <em>Orígenes de JavaScript autorizados</em> añade tu URL de GitHub Pages (ej: <code>https://tunombre.github.io</code>). Copia el Client ID que te genera.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="step-title">Pega el Client ID en el código</div>
+        <div class="step-desc">Abre el archivo HTML con un editor de texto (Notepad, TextEdit…), busca <code>TU_CLIENT_ID_AQUI</code> y sustitúyelo por tu Client ID. Repite el paso 2 para subir la versión actualizada.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <div class="step-title">Añade el Folder ID de Drive</div>
+        <div class="step-desc">En Google Drive crea una carpeta para las entregas. Ábrela y copia el ID que aparece al final de la URL: <code>drive.google.com/drive/folders/<strong>ESTE_ES_EL_ID</strong></code>. Pégalo en el código donde pone <code>TU_FOLDER_ID_AQUI</code> y vuelve a subir el archivo.</div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      💡 <strong>Tip:</strong> cuando todo esté configurado, el aviso naranja desaparece automáticamente. Las entregas se organizarán en subcarpetas con el formato <code>Semana X — Curso — Tipo — Nombre alumno</code>.
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIGURACIÓN — edita estos dos valores
+const CLIENT_ID = 'TU_CLIENT_ID_AQUI';
+const FOLDER_ID = 'TU_FOLDER_ID_AQUI';
+// ══════════════════════════════════════════
+
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+let tokenClient, accessToken = null, selectedFiles = [], tipoEntrega = 'Entrega';
+
+function selectType(el) {
+  document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  tipoEntrega = el.dataset.type;
+}
+
+function getWeek(d) {
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const y = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - y) / 86400000) + 1) / 7);
+}
+function initWeek() {
+  const now = new Date(), w = getWeek(now);
+  document.getElementById('weekLabel').textContent = `Semana ${w} · ${now.getFullYear()}`;
+  const sel = document.getElementById('semana');
+  for (let i = 1; i <= 12; i++) {
+    const o = document.createElement('option');
+    o.value = o.textContent = `Semana ${i}`;
+    if (i === Math.min(w, 12)) o.selected = true;
+    sel.appendChild(o);
+  }
+}
+
+function selectChip(el, group) {
+  const chipsId = group === 'dif' ? 'difChips' : 'comChips';
+  const taId    = group === 'dif' ? 'dificultades' : 'comentarios';
+  document.querySelectorAll(`#${chipsId} .chip`).forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const ta = document.getElementById(taId);
+  if (!ta.value || ta.dataset.chip === '1') { ta.value = el.textContent.trim(); ta.dataset.chip = '1'; }
+}
+['dificultades','comentarios'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function(){ this.dataset.chip = '0'; });
+});
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); addFiles(Array.from(e.dataTransfer.files)); });
+fileInput.addEventListener('change', () => addFiles(Array.from(fileInput.files)));
+
+function addFiles(files) {
+  files.forEach(f => { if (!selectedFiles.find(x => x.name===f.name&&x.size===f.size)) selectedFiles.push(f); });
+  renderFiles();
+}
+function removeFile(i) { selectedFiles.splice(i,1); renderFiles(); }
+function ftype(n) {
+  const e = n.split('.').pop().toLowerCase();
+  return ['mp4','mov','avi','mkv','wmv','webm'].includes(e) ? 'video' : ['rar','zip','7z'].includes(e) ? 'rar' : 'other';
+}
+function fsize(b) {
+  if(b<1024) return b+' B'; if(b<1024**2) return (b/1024).toFixed(1)+' KB';
+  if(b<1024**3) return (b/1024**2).toFixed(1)+' MB'; return (b/1024**3).toFixed(2)+' GB';
+}
+function renderFiles() {
+  document.getElementById('fileList').innerHTML = selectedFiles.map((f,i) => {
+    const t = ftype(f.name), ext = f.name.split('.').pop().toUpperCase();
+    return `<div class="file-item"><div class="ficon ${t}">${ext}</div><div class="finfo"><div class="fname">${f.name}</div><div class="fsize">${fsize(f.size)}</div></div><button class="fremove" onclick="removeFile(${i})">✕</button></div>`;
+  }).join('');
+}
+
+function validate() {
+  const reqs = [{id:'nombre',l:'Nombre y apellidos'},{id:'email',l:'Email'},{id:'curso',l:'Curso'},{id:'semana',l:'Semana'},{id:'horas',l:'Horas dedicadas'},{id:'dificultades',l:'Cómo te ha ido'}];
+  for (const r of reqs) {
+    if (!document.getElementById(r.id).value.trim()) {
+      document.getElementById(r.id).focus();
+      setStatus('err', `Falta rellenar: ${r.l} 👀`);
+      return false;
+    }
+  }
+  if (!selectedFiles.length) { setStatus('err','¡Olvidas adjuntar el archivo! 📎'); return false; }
+  return true;
+}
+
+function setStatus(type, msg) {
+  const b = document.getElementById('statusBox');
+  b.className = 'status-box ' + type;
+  b.innerHTML = `<span>${type==='ok'?'✅':'❌'}</span><span>${msg}</span>`;
+  b.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function setProgress(pct, label) {
+  const show = pct >= 0;
+  document.getElementById('progressWrap').style.display = show ? 'block' : 'none';
+  document.getElementById('progressLabel').style.display = show ? 'block' : 'none';
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = label || '';
+}
+
+function loadGIS() {
+  if (CLIENT_ID === 'TU_CLIENT_ID_AQUI') return;
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID, scope: SCOPES,
+    callback: r => {
+      if (r.error) { setStatus('err','Error de autenticación: '+r.error); return; }
+      accessToken = r.access_token;
+      uploadAll();
+    }
+  });
+}
+
+async function uploadAll() {
+  const btn = document.getElementById('submitBtn'); btn.disabled = true;
+  const nombre = document.getElementById('nombre').value.trim();
+  const email  = document.getElementById('email').value.trim();
+  const curso  = document.getElementById('curso').value;
+  const semana = document.getElementById('semana').value;
+  const horas  = document.getElementById('horas').value;
+  const dif    = document.getElementById('dificultades').value.trim();
+  const com    = document.getElementById('comentarios').value.trim();
+  try {
+    const folderName = `${semana} — ${curso} — ${tipoEntrega} — ${nombre}`;
+    const fRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+      method:'POST', headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'},
+      body: JSON.stringify({name:folderName, mimeType:'application/vnd.google-apps.folder', parents:[FOLDER_ID]})
+    });
+    const {id: subId} = await fRes.json();
+
+    const nota = [
+      `TIPO: ${tipoEntrega}`, `CURSO: ${curso}`, `ALUMNO: ${nombre}`,
+      `EMAIL: ${email}`, `SEMANA: ${semana}`, `HORAS: ${horas}h`,
+      `FECHA: ${new Date().toLocaleString('es-ES')}`,
+      ``, `CÓMO HA IDO:`, dif, ``, `COMENTARIOS:`, com||'(ninguno)'
+    ].join('\n');
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify({name:'datos_entrega.txt',parents:[subId]})],{type:'application/json'}));
+    form.append('file', new File([new Blob([nota],{type:'text/plain'})],'datos_entrega.txt',{type:'text/plain'}));
+    await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{'Authorization':'Bearer '+accessToken},body:form});
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const f = selectedFiles[i];
+      setProgress(0, `Subiendo archivo ${i+1}/${selectedFiles.length}…`);
+      const iRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable',{
+        method:'POST',
+        headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json; charset=UTF-8','X-Upload-Content-Type':f.type||'application/octet-stream','X-Upload-Content-Length':f.size},
+        body: JSON.stringify({name:f.name, parents:[subId]})
+      });
+      if (!iRes.ok) throw new Error('Error iniciando subida');
+      const uploadUrl = iRes.headers.get('Location');
+      const CHUNK = 5*1024*1024; let off = 0;
+      while (off < f.size) {
+        const end = Math.min(off+CHUNK, f.size)-1;
+        const res = await fetch(uploadUrl,{method:'PUT',headers:{'Content-Range':`bytes ${off}-${end}/${f.size}`,'Content-Type':f.type||'application/octet-stream'},body:f.slice(off,off+CHUNK)});
+        if (res.status===308) { const rng=res.headers.get('Range'); off=rng?parseInt(rng.split('-')[1])+1:off+CHUNK; }
+        else if (res.ok) { off = f.size; }
+        else throw new Error('Error en chunk: '+res.status);
+        setProgress(Math.round(off/f.size*100), `Subiendo ${f.name}… ${Math.round(off/f.size*100)}%`);
+      }
+    }
+    setProgress(100,'¡Listo! 🎉'); setTimeout(()=>setProgress(-1),2500);
+    setStatus('ok', `¡Entregado! Tu ${tipoEntrega} de ${curso} (${semana}) ya está en Drive 🚀`);
+    ['nombre','email','horas','dificultades','comentarios'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('curso').value=''; document.getElementById('semana').selectedIndex=0;
+    document.querySelectorAll('.chip.selected').forEach(c => c.classList.remove('selected'));
+    selectedFiles=[]; renderFiles();
+  } catch(err) { setStatus('err','Algo ha fallado: '+err.message+' 😬'); console.error(err); }
+  finally { btn.disabled = false; }
+}
+
+function handleSubmit() {
+  document.getElementById('statusBox').className = 'status-box';
+  if (!validate()) return;
+  if (CLIENT_ID === 'TU_CLIENT_ID_AQUI') { setStatus('err','Configura primero el Client ID de Google 🔑'); return; }
+  if (accessToken) uploadAll(); else tokenClient.requestAccessToken({prompt:'consent'});
+}
+
+initWeek();
+window.onload = () => {
+  if (CLIENT_ID !== 'TU_CLIENT_ID_AQUI') {
+    document.getElementById('configNotice').style.display = 'none';
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = loadGIS;
+    document.head.appendChild(s);
+  }
+};
+</script>
+</body>
+</html>
