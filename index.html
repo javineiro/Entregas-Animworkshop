@@ -49,10 +49,10 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
   content:''; position:absolute; bottom:-30px; left:-20px; right:-20px; height:50px;
   background:var(--bg); border-radius:50% 50% 0 0/100% 100% 0 0;
 }
-.header-emoji { font-size:2.2rem; margin-bottom:0.6rem; display:block; position:relative; }
-.header h1 { font-size:clamp(1.7rem,5vw,2.3rem); font-weight:800; color:var(--white); line-height:1.2; margin-bottom:0.4rem; position:relative; }
+.header-emoji { font-size:2.2rem; margin-bottom:0.6rem; display:block; position:relative; text-align:center; }
+.header h1 { font-size:clamp(1.7rem,5vw,2.3rem); font-weight:800; color:var(--white); line-height:1.2; margin-bottom:0.4rem; position:relative; text-align:center; }
 .header h1 em { font-style:italic; color:var(--purple); }
-.header p { font-size:14px; color:var(--ink-mid); position:relative; }
+.header p { font-size:14px; color:var(--ink-mid); position:relative; text-align:center; }
 .week-pill {
   display:inline-flex; align-items:center; gap:7px;
   background:rgba(168,85,247,0.15); border:1px solid var(--purple-border);
@@ -185,10 +185,6 @@ main { max-width:620px; margin:0 auto; padding:1.75rem 1.25rem 5rem; }
   <span class="header-emoji">📬</span>
   <h1>¡Sube tu tarea<br>de esta <em>semana</em>!</h1>
   <p>Rellena el formulario y adjunta tu archivo 🎉</p>
-  <div class="week-pill">
-    <span class="week-dot"></span>
-    <span id="weekLabel">Semana actual</span>
-  </div>
 </div>
 
 <main>
@@ -197,7 +193,6 @@ main { max-width:620px; margin:0 auto; padding:1.75rem 1.25rem 5rem; }
     <span style="font-size:18px">⚠️</span>
     <div>
       <strong>Falta configurar Drive:</strong> sigue las instrucciones al final de la página para activar la subida.
-      <a href="#instrucciones" style="text-decoration:underline;display:block;margin-top:2px">Ver instrucciones ↓</a>
     </div>
   </div>
 
@@ -225,7 +220,7 @@ main { max-width:620px; margin:0 auto; padding:1.75rem 1.25rem 5rem; }
         <input type="text" id="nombre" placeholder="Tu nombre completo">
       </div>
       <div class="field">
-        <label for="email">Email <span class="req">*</span></label>
+        <label for="email">Email</label>
         <input type="email" id="email" placeholder="tuemail@aqui.com">
       </div>
     </div>
@@ -259,7 +254,7 @@ main { max-width:620px; margin:0 auto; padding:1.75rem 1.25rem 5rem; }
     </div>
 
     <div class="field">
-      <label>¿Cómo te ha ido? <span class="req">*</span></label>
+      <label>¿Cómo te ha ido?</label>
       <div class="chips-label">Elige una opción o escribe abajo 👇</div>
       <div class="chips" id="difChips">
         <div class="chip" onclick="selectChip(this,'dif')">😎 Todo bien!</div>
@@ -306,74 +301,6 @@ main { max-width:620px; margin:0 auto; padding:1.75rem 1.25rem 5rem; }
   <div class="progress-wrap" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
   <div class="progress-label" id="progressLabel"></div>
   <div class="status-box" id="statusBox"></div>
-
-  <!-- INSTRUCCIONES -->
-  <div class="instrucciones" id="instrucciones">
-    <h2>⚙️ Cómo configurarlo paso a paso</h2>
-
-    <p style="color:var(--ink-mid);font-size:13px;margin-bottom:1.25rem">
-      Como el archivo se abre localmente (<code>file://</code>), Google no permite autenticarse así directamente.
-      La solución más sencilla es publicarlo gratis en <strong style="color:var(--ink)">GitHub Pages</strong> — tarda menos de 5 minutos y tus alumnos acceden con un enlace normal.
-    </p>
-
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <div class="step-title">Crea una cuenta en GitHub</div>
-        <div class="step-desc">Ve a <a href="https://github.com" target="_blank">github.com</a> y regístrate gratis (si ya tienes cuenta, sáltate este paso).</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <div class="step-title">Sube el archivo HTML</div>
-        <div class="step-desc">Crea un repositorio nuevo → ponle el nombre que quieras → haz clic en <em>"uploading an existing file"</em> → arrastra este archivo HTML → nómbralo exactamente <code>index.html</code> → pulsa <em>"Commit changes"</em>.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <div class="step-title">Activa GitHub Pages</div>
-        <div class="step-desc">En tu repositorio ve a <em>Settings → Pages → Source</em>, selecciona la rama <code>main</code> y pulsa <em>Save</em>. En unos segundos tendrás una URL del tipo <code>https://tunombre.github.io/nombre-repo/</code>. ¡Esa es la URL que envías a tus alumnos!</div>
-      </div>
-    </div>
-
-    <div class="instr-divider"></div>
-
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-body">
-        <div class="step-title">Configura Google Cloud</div>
-        <div class="step-desc">Ve a <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a>, crea un proyecto y activa la <strong style="color:var(--ink)">Google Drive API</strong> en "APIs y servicios → Biblioteca".</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">5</div>
-      <div class="step-body">
-        <div class="step-title">Crea las credenciales OAuth</div>
-        <div class="step-desc">En "APIs y servicios → Credenciales" crea un <strong style="color:var(--ink)">ID de cliente OAuth 2.0</strong> de tipo "Aplicación web". En <em>Orígenes de JavaScript autorizados</em> añade tu URL de GitHub Pages (ej: <code>https://tunombre.github.io</code>). Copia el Client ID que te genera.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">6</div>
-      <div class="step-body">
-        <div class="step-title">Pega el Client ID en el código</div>
-        <div class="step-desc">Abre el archivo HTML con un editor de texto (Notepad, TextEdit…), busca <code>TU_CLIENT_ID_AQUI</code> y sustitúyelo por tu Client ID. Repite el paso 2 para subir la versión actualizada.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">7</div>
-      <div class="step-body">
-        <div class="step-title">Añade el Folder ID de Drive</div>
-        <div class="step-desc">En Google Drive crea una carpeta para las entregas. Ábrela y copia el ID que aparece al final de la URL: <code>drive.google.com/drive/folders/<strong>ESTE_ES_EL_ID</strong></code>. Pégalo en el código donde pone <code>TU_FOLDER_ID_AQUI</code> y vuelve a subir el archivo.</div>
-      </div>
-    </div>
-
-    <div class="tip-box">
-      💡 <strong>Tip:</strong> cuando todo esté configurado, el aviso naranja desaparece automáticamente. Las entregas se organizarán en subcarpetas con el formato <code>Semana X — Curso — Tipo — Nombre alumno</code>.
-    </div>
-  </div>
-
 </main>
 
 <script>
@@ -383,7 +310,7 @@ const CLIENT_ID = '777248539986-bci7cvk3kqj71o47nv8arbefi5rfqfeg.apps.googleuser
 const FOLDER_ID = '1akQHl_AMP1UEW1nOSQocGuXc9Lgcv-Yy';
 // ══════════════════════════════════════════
 
-const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+const SCOPES = 'https://www.googleapis.com/auth/drive';
 let tokenClient, accessToken = null, selectedFiles = [], tipoEntrega = 'Entrega';
 
 function selectType(el) {
@@ -400,12 +327,11 @@ function getWeek(d) {
 }
 function initWeek() {
   const now = new Date(), w = getWeek(now);
-  document.getElementById('weekLabel').textContent = `Semana ${w} · ${now.getFullYear()}`;
   const sel = document.getElementById('semana');
   for (let i = 1; i <= 12; i++) {
     const o = document.createElement('option');
     o.value = o.textContent = `Semana ${i}`;
-    if (i === Math.min(w, 12)) o.selected = true;
+    if (i === 1) o.selected = true;
     sel.appendChild(o);
   }
 }
@@ -450,7 +376,7 @@ function renderFiles() {
 }
 
 function validate() {
-  const reqs = [{id:'nombre',l:'Nombre y apellidos'},{id:'email',l:'Email'},{id:'curso',l:'Curso'},{id:'semana',l:'Semana'},{id:'horas',l:'Horas dedicadas'},{id:'dificultades',l:'Cómo te ha ido'}];
+  const reqs = [{id:'nombre',l:'Nombre y apellidos'},{id:'curso',l:'Curso'},{id:'semana',l:'Semana'},{id:'horas',l:'Horas dedicadas'}];
   for (const r of reqs) {
     if (!document.getElementById(r.id).value.trim()) {
       document.getElementById(r.id).focus();
@@ -488,6 +414,17 @@ function loadGIS() {
   });
 }
 
+async function drivePost(url, extraHeaders, body) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {'Authorization': 'Bearer ' + accessToken, ...extraHeaders},
+    body
+  });
+  const json = await res.json();
+  if (!res.ok) { console.error('Drive API error:', json); throw new Error(json.error?.message || `HTTP ${res.status}`); }
+  return json;
+}
+
 async function uploadAll() {
   const btn = document.getElementById('submitBtn'); btn.disabled = true;
   const nombre = document.getElementById('nombre').value.trim();
@@ -498,53 +435,116 @@ async function uploadAll() {
   const dif    = document.getElementById('dificultades').value.trim();
   const com    = document.getElementById('comentarios').value.trim();
   try {
-    const folderName = `${semana} — ${curso} — ${tipoEntrega} — ${nombre}`;
-    const fRes = await fetch('https://www.googleapis.com/drive/v3/files', {
-      method:'POST', headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'},
-      body: JSON.stringify({name:folderName, mimeType:'application/vnd.google-apps.folder', parents:[FOLDER_ID]})
-    });
-    const {id: subId} = await fRes.json();
+    // 1. Verificar acceso a la carpeta raiz
+    setProgress(2, 'Verificando carpeta de Drive...');
+    console.log('Verificando FOLDER_ID:', FOLDER_ID);
+    const checkRes = await fetch(
+      `https://www.googleapis.com/drive/v3/files/${FOLDER_ID}?fields=id,name,mimeType`,
+      {headers: {'Authorization': 'Bearer ' + accessToken}}
+    );
+    const checkJson = await checkRes.json();
+    if (!checkRes.ok) {
+      console.error('Error accediendo a carpeta raiz:', checkJson);
+      throw new Error(`No se puede acceder a la carpeta de Drive. Detalle: ${checkJson.error?.message || checkRes.status}`);
+    }
+    console.log('Carpeta raiz OK:', checkJson.name, '(', checkJson.id, ')');
 
+    // 2. Crear subcarpeta del alumno dentro de la carpeta raiz
+    setProgress(5, 'Creando carpeta del alumno...');
+    const folderName = `${semana} — ${curso} — ${tipoEntrega} — ${nombre}`;
+    console.log('Creando subcarpeta:', folderName, '-> parent:', FOLDER_ID);
+    const folderData = await drivePost(
+      'https://www.googleapis.com/drive/v3/files',
+      {'Content-Type': 'application/json'},
+      JSON.stringify({name: folderName, mimeType: 'application/vnd.google-apps.folder', parents: [FOLDER_ID]})
+    );
+    const subId = folderData.id;
+    console.log('Subcarpeta creada, ID:', subId);
+
+    // 3. Subir nota de texto
+    setProgress(10, 'Guardando datos del formulario...');
     const nota = [
       `TIPO: ${tipoEntrega}`, `CURSO: ${curso}`, `ALUMNO: ${nombre}`,
       `EMAIL: ${email}`, `SEMANA: ${semana}`, `HORAS: ${horas}h`,
       `FECHA: ${new Date().toLocaleString('es-ES')}`,
-      ``, `CÓMO HA IDO:`, dif, ``, `COMENTARIOS:`, com||'(ninguno)'
+      '', 'COMO HA IDO:', dif, '', 'COMENTARIOS:', com || '(ninguno)'
     ].join('\n');
     const form = new FormData();
-    form.append('metadata', new Blob([JSON.stringify({name:'datos_entrega.txt',parents:[subId]})],{type:'application/json'}));
-    form.append('file', new File([new Blob([nota],{type:'text/plain'})],'datos_entrega.txt',{type:'text/plain'}));
-    await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{'Authorization':'Bearer '+accessToken},body:form});
+    form.append('metadata', new Blob([JSON.stringify({name: 'datos_entrega.txt', parents: [subId]})], {type: 'application/json'}));
+    form.append('file', new File([new Blob([nota], {type: 'text/plain'})], 'datos_entrega.txt', {type: 'text/plain'}));
+    await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST', headers: {'Authorization': 'Bearer ' + accessToken}, body: form
+    });
+    console.log('Nota de texto subida OK');
 
+    // 4. Subir archivos en chunks
     for (let i = 0; i < selectedFiles.length; i++) {
       const f = selectedFiles[i];
-      setProgress(0, `Subiendo archivo ${i+1}/${selectedFiles.length}…`);
-      const iRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable',{
-        method:'POST',
-        headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json; charset=UTF-8','X-Upload-Content-Type':f.type||'application/octet-stream','X-Upload-Content-Length':f.size},
-        body: JSON.stringify({name:f.name, parents:[subId]})
+      const pctBase = 12 + Math.round((i / selectedFiles.length) * 86);
+      setProgress(pctBase, `Iniciando subida: ${f.name}...`);
+      console.log(`Subiendo [${i+1}/${selectedFiles.length}]:`, f.name, fsize(f.size), '-> carpeta subId:', subId);
+
+      const iRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+          'Content-Type': 'application/json; charset=UTF-8',
+          'X-Upload-Content-Type': f.type || 'application/octet-stream',
+          'X-Upload-Content-Length': f.size
+        },
+        body: JSON.stringify({name: f.name, parents: [subId]})
       });
-      if (!iRes.ok) throw new Error('Error iniciando subida');
+      if (!iRes.ok) {
+        const errJson = await iRes.json().catch(() => ({}));
+        console.error('Error iniciando resumable upload:', errJson);
+        throw new Error(`Error iniciando subida de "${f.name}": ${errJson.error?.message || iRes.status}`);
+      }
       const uploadUrl = iRes.headers.get('Location');
-      const CHUNK = 5*1024*1024; let off = 0;
+      console.log('Upload URL OK para', f.name);
+
+      const CHUNK = 5 * 1024 * 1024; let off = 0;
       while (off < f.size) {
-        const end = Math.min(off+CHUNK, f.size)-1;
-        const res = await fetch(uploadUrl,{method:'PUT',headers:{'Content-Range':`bytes ${off}-${end}/${f.size}`,'Content-Type':f.type||'application/octet-stream'},body:f.slice(off,off+CHUNK)});
-        if (res.status===308) { const rng=res.headers.get('Range'); off=rng?parseInt(rng.split('-')[1])+1:off+CHUNK; }
-        else if (res.ok) { off = f.size; }
-        else throw new Error('Error en chunk: '+res.status);
-        setProgress(Math.round(off/f.size*100), `Subiendo ${f.name}… ${Math.round(off/f.size*100)}%`);
+        const end = Math.min(off + CHUNK, f.size) - 1;
+        const res = await fetch(uploadUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Range': `bytes ${off}-${end}/${f.size}`,
+            'Content-Type': f.type || 'application/octet-stream'
+          },
+          body: f.slice(off, off + CHUNK)
+        });
+        if (res.status === 308) {
+          const rng = res.headers.get('Range');
+          off = rng ? parseInt(rng.split('-')[1]) + 1 : off + CHUNK;
+        } else if (res.ok) {
+          const done = await res.json().catch(() => ({}));
+          console.log('Archivo subido OK:', done.name, 'id:', done.id);
+          off = f.size;
+        } else {
+          throw new Error(`Error en chunk de "${f.name}": HTTP ${res.status}`);
+        }
+        const filePct = Math.round(off / f.size * 100);
+        setProgress(pctBase + Math.round(filePct * (86 / selectedFiles.length) / 100), `Subiendo ${f.name}... ${filePct}%`);
       }
     }
-    setProgress(100,'¡Listo! 🎉'); setTimeout(()=>setProgress(-1),2500);
-    setStatus('ok', `¡Entregado! Tu ${tipoEntrega} de ${curso} (${semana}) ya está en Drive 🚀`);
-    ['nombre','email','horas','dificultades','comentarios'].forEach(id => document.getElementById(id).value='');
-    document.getElementById('curso').value=''; document.getElementById('semana').selectedIndex=0;
+
+    setProgress(100, 'Listo!');
+    setTimeout(() => setProgress(-1), 2500);
+    setStatus('ok', `Entregado! Tu ${tipoEntrega} de ${curso} (${semana}) ya esta en Drive`);
+    ['nombre', 'email', 'horas', 'dificultades', 'comentarios'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('curso').value = '';
+    document.getElementById('semana').selectedIndex = 0;
     document.querySelectorAll('.chip.selected').forEach(c => c.classList.remove('selected'));
-    selectedFiles=[]; renderFiles();
-  } catch(err) { setStatus('err','Algo ha fallado: '+err.message+' 😬'); console.error(err); }
-  finally { btn.disabled = false; }
+    selectedFiles = []; renderFiles();
+
+  } catch(err) {
+    setStatus('err', err.message + ' — Abre la consola (F12) para ver el detalle');
+    console.error('Error completo:', err);
+  } finally {
+    btn.disabled = false;
+  }
 }
+
 
 function handleSubmit() {
   document.getElementById('statusBox').className = 'status-box';
