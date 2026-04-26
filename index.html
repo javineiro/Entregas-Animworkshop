@@ -192,7 +192,7 @@ main { max-width:620px; margin:0 auto; padding:1.75rem 1.25rem 5rem; }
   <div class="config-notice" id="configNotice">
     <span style="font-size:18px">⚠️</span>
     <div>
-      <strong>Falta configurar Drive:</strong> sigue las instrucciones al final de la página para activar la subida.
+      <strong>Falta configurar:</strong> sustituye <code>TU_CLIENT_ID_AQUI</code> y <code>TU_EMAIL_AQUI</code> en el código.
     </div>
   </div>
 
@@ -306,11 +306,12 @@ main { max-width:620px; margin:0 auto; padding:1.75rem 1.25rem 5rem; }
 <script>
 // ══════════════════════════════════════════
 // CONFIGURACIÓN — edita estos dos valores
-const CLIENT_ID = '777248539986-bci7cvk3kqj71o47nv8arbefi5rfqfeg.apps.googleusercontent.com';
-const FOLDER_ID = '1akQHl_AMP1UEW1nOSQocGuXc9Lgcv-Yy';
+const CLIENT_ID = 'TU_CLIENT_ID_AQUI';
+const FOLDER_ID = '1akQHl_AMP1UEW1nOSQocGuXc9Lgcv-Yy'; // ya no se usa, pero se conserva por compatibilidad
+const TEACHER_EMAIL = 'javi.neiro@animworkshop.com'; // email de tu cuenta de Google Drive
 // ══════════════════════════════════════════
 
-const SCOPES = 'https://www.googleapis.com/auth/drive';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 let tokenClient, accessToken = null, selectedFiles = [], tipoEntrega = 'Entrega';
 
 function selectType(el) {
@@ -435,31 +436,26 @@ async function uploadAll() {
   const dif    = document.getElementById('dificultades').value.trim();
   const com    = document.getElementById('comentarios').value.trim();
   try {
-    // 1. Verificar acceso a la carpeta raiz
-    setProgress(2, 'Verificando carpeta de Drive...');
-    console.log('Verificando FOLDER_ID:', FOLDER_ID);
-    const checkRes = await fetch(
-      `https://www.googleapis.com/drive/v3/files/${FOLDER_ID}?fields=id,name,mimeType`,
-      {headers: {'Authorization': 'Bearer ' + accessToken}}
-    );
-    const checkJson = await checkRes.json();
-    if (!checkRes.ok) {
-      console.error('Error accediendo a carpeta raiz:', checkJson);
-      throw new Error(`No se puede acceder a la carpeta de Drive. Detalle: ${checkJson.error?.message || checkRes.status}`);
-    }
-    console.log('Carpeta raiz OK:', checkJson.name, '(', checkJson.id, ')');
-
-    // 2. Crear subcarpeta del alumno dentro de la carpeta raiz
+    // 1. Crear carpeta del alumno en el Drive del alumno
     setProgress(5, 'Creando carpeta del alumno...');
     const folderName = `${semana} — ${curso} — ${tipoEntrega} — ${nombre}`;
-    console.log('Creando subcarpeta:', folderName, '-> parent:', FOLDER_ID);
+    console.log('Creando carpeta:', folderName);
     const folderData = await drivePost(
       'https://www.googleapis.com/drive/v3/files',
       {'Content-Type': 'application/json'},
-      JSON.stringify({name: folderName, mimeType: 'application/vnd.google-apps.folder', parents: [FOLDER_ID]})
+      JSON.stringify({name: folderName, mimeType: 'application/vnd.google-apps.folder'})
     );
     const subId = folderData.id;
-    console.log('Subcarpeta creada, ID:', subId);
+    console.log('Carpeta creada, ID:', subId);
+
+    // 2. Compartir la carpeta con el profesor (escritura)
+    setProgress(8, 'Compartiendo con el profesor...');
+    await fetch(`https://www.googleapis.com/drive/v3/files/${subId}/permissions`, {
+      method: 'POST',
+      headers: {'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json'},
+      body: JSON.stringify({role: 'writer', type: 'user', emailAddress: TEACHER_EMAIL})
+    });
+    console.log('Carpeta compartida con', TEACHER_EMAIL);
 
     // 3. Subir nota de texto
     setProgress(10, 'Guardando datos del formulario...');
